@@ -52,6 +52,25 @@ Run headed mode:
 npx playwright test --config=playwright/config/playwright.config.ts --headed
 ```
 
+Run parallel tests and select browsers:
+
+```powershell
+# Set the Playwright worker count (defaults to CPU availability locally)
+$env:WORKERS="4"
+npm run test:ui:parallel
+
+# Run only Chromium, Firefox, or WebKit
+npm run test:ui:chromium
+npm run test:ui:firefox
+npm run test:ui:webkit
+
+# Run all three browser projects
+npm run test:ui:all
+
+# Equivalent project filtering with a custom worker count
+npx playwright test --config=playwright/config/playwright.config.ts --project=firefox --workers=4
+```
+
 ## Page Object Model
 
 Page objects are stored in `playwright/pages/`:

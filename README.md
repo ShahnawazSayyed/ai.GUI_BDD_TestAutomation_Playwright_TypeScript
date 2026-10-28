@@ -32,6 +32,9 @@ Install all supported Playwright browsers when required:
 npx playwright install
 ```
 
+For complete setup and execution examples, see
+[Browser Installation and Parallel Execution](documentation/browser-installation-and-parallel-execution.md).
+
 ## Project Structure
 
 ```text
@@ -63,6 +66,23 @@ npm run typecheck
 
 # Run the Playwright Test configuration
 npm run test:ui
+
+# Run Cucumber scenarios with 4 parallel workers
+npm run test:parallel
+
+# Run Playwright tests in parallel (4 workers)
+$env:WORKERS="4"; npm run test:ui:parallel
+
+# Run Playwright tests across Chromium, Firefox, and WebKit
+npm run test:ui:all
+
+# Run the same Cucumber suite in one browser
+npm run test:chromium
+npm run test:firefox
+npm run test:webkit
+
+# Run the Cucumber suite concurrently in Chromium, Firefox, and WebKit
+npm run test:browsers
 ```
 
 The Cucumber HTML report is generated at `test-results/cucumber-report.html`. Evidence such as screenshots and videos is controlled by `config/commonConfig.json`.
@@ -83,6 +103,7 @@ Environment variables `BROWSER`, `HEADLESS`, and `BASE_URL` can override support
 
 ## Documentation
 
+- [Browser installation and parallel execution](documentation/browser-installation-and-parallel-execution.md) - Install Chromium, Firefox, and WebKit and configure worker-based parallel runs.
 - [Playwright documentation](documentation/playwright.md) - Browser setup, configuration, Playwright commands, and the Page Object Model.
 - [Cucumber BDD documentation](documentation/cucumber-bdd.md) - Feature files, step definitions, hooks, reporting, shared configuration, and adding scenarios.
 

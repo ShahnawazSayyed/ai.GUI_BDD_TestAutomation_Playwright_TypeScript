@@ -97,6 +97,27 @@ Run all Cucumber scenarios:
 npm test
 ```
 
+Run scenarios in parallel using Cucumber workers:
+
+```powershell
+# Four parallel scenarios (also available as test:parallel)
+npx cucumber-js --parallel 4
+
+# Run headed in parallel
+npm run test:parallel:headed
+
+# Run in Chromium, Firefox, or WebKit
+npm run test:chromium
+npm run test:firefox
+npm run test:webkit
+
+# Run all browsers concurrently (4 workers per browser by default)
+npm run test:browsers
+
+# Override the worker count for all three browser processes
+$env:CUCUMBER_WORKERS="2"; npm run test:browsers
+```
+
 Run in headed mode:
 
 ```powershell
