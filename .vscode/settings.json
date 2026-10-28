@@ -1,0 +1,10 @@
+{
+  "cucumberautocomplete.steps": [
+    "playwright/steps/**/*.ts"
+  ],
+  "cucumberautocomplete.syncfeatures": [
+    "features/**/*.feature"
+  ],
+  "cucumberautocomplete.strictGherkinCompletion": true,
+  "cucumberautocomplete.smartSnippets": true
+}
