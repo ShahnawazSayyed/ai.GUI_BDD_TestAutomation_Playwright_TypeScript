@@ -1,0 +1,2 @@
+# ai.GUI_BDD_TestAutomation_Playwright_TypeScript
+GUI Automation Framework using Playwright TypeScript
