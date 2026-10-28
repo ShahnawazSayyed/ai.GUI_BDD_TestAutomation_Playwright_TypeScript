@@ -1,0 +1,9 @@
+{
+  "testCaseTimeout": 30000,
+  "retryCount": 2,
+  "reportPath": "./reports",
+  "logLevel": "info",
+  "browser": "chrome",
+  "headless": false,
+  "screenshotOnFailure": true
+}
