@@ -16,6 +16,9 @@ import {
   webkit
 } from "@playwright/test";
 import { PageManager } from "./pageManager";
+import { commonConfig } from "../../utilities/commonConfig";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 setDefaultTimeout(30_000);
 
@@ -40,7 +43,9 @@ export class AutomationWorldImpl extends World implements AutomationWorld {
 setWorldConstructor(AutomationWorldImpl);
 
 Before(async function (this: AutomationWorld) {
-  const browserName = process.env.BROWSER?.toLowerCase() ?? "chromium";
+  const browserProperties = commonConfig.BROWSER_PROPERTIES;
+  const evidenceProperties = commonConfig.EVIDENCE_PROPERTIES;
+  const browserName = process.env.BROWSER?.toLowerCase() ?? browserProperties.BROWSER;
   const browserType = browserName === "firefox"
     ? firefox
     : browserName === "webkit"
@@ -48,19 +53,42 @@ Before(async function (this: AutomationWorld) {
       : chromium;
 
   this.browser = await browserType.launch({
-    headless: process.env.HEADLESS !== "false"
+    headless: browserProperties.HEADLESS
   });
+  const [width, height] = browserProperties.WINDOW_SIZE
+    .split(",")
+    .map((value) => Number(value.trim()));
   this.context = await this.browser.newContext({
-    baseURL: process.env.BASE_URL
+    baseURL: process.env.BASE_URL,
+    viewport: { width, height },
+    recordVideo: evidenceProperties.VIDEO_RECORDING
+      ? { dir: path.resolve(process.cwd(), evidenceProperties.VIDEO_PATH) }
+      : undefined
   });
   this.page = await this.context.newPage();
+  this.page.setDefaultTimeout(browserProperties.IMPLICIT_WAIT * 1000);
+  this.page.setDefaultNavigationTimeout(browserProperties.PAGE_LOAD_TIMEOUT * 1000);
   this.pageManager = new PageManager(this.page);
 });
 
 After(async function (this: AutomationWorld, scenario) {
-  if (scenario.result?.status === Status.FAILED && this.page) {
-    const screenshot = await this.page.screenshot({ fullPage: true });
-    await this.attach(screenshot, "image/png");
+  const evidenceProperties = commonConfig.EVIDENCE_PROPERTIES;
+  const failed = scenario.result?.status === Status.FAILED;
+  const shouldCapture = this.page && (
+    (failed && evidenceProperties.SCREENSHOT_ON_FAILURE) ||
+    (!failed && evidenceProperties.SCREENSHOT_ON_SUCCESS)
+  );
+
+  if (shouldCapture) {
+    fs.mkdirSync(path.resolve(process.cwd(), evidenceProperties.SCREENSHOT_PATH), { recursive: true });
+    const safeName = scenario.pickle.name.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
+    const screenshotPath = path.resolve(
+      process.cwd(),
+      evidenceProperties.SCREENSHOT_PATH,
+      `${safeName || "scenario"}-${Date.now()}.png`
+    );
+    await this.page!.screenshot({ path: screenshotPath, fullPage: true });
+    await this.attach(fs.readFileSync(screenshotPath), "image/png");
   }
 
   await this.context?.close();

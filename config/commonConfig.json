@@ -1,9 +1,16 @@
 {
-  "testCaseTimeout": 30000,
-  "retryCount": 2,
-  "reportPath": "./reports",
-  "logLevel": "info",
-  "browser": "chrome",
-  "headless": false,
-  "screenshotOnFailure": true
+  "BROWSER_PROPERTIES": {
+    "BROWSER": "chrome",
+    "HEADLESS": false,
+    "WINDOW_SIZE": "1920,1080",
+    "IMPLICIT_WAIT": 10,
+    "PAGE_LOAD_TIMEOUT": 30
+  },
+  "EVIDENCE_PROPERTIES": {
+    "SCREENSHOT_ON_FAILURE": true,
+    "SCREENSHOT_ON_SUCCESS": false,
+    "SCREENSHOT_PATH": "./test-results/screenshots",
+    "VIDEO_RECORDING": true,
+    "VIDEO_PATH": "./test-results/videos"
+  }
 }

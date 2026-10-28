@@ -63,6 +63,29 @@ Given("I navigate to {string}", async function (url: string) {
 
 Reports are written to `test-results/cucumber-report.html` by default.
 
+## Common Configuration
+
+Browser and evidence settings are loaded from `config/commonConfig.json`:
+
+```json
+{
+  "BROWSER_PROPERTIES": {
+    "BROWSER": "chrome",
+    "HEADLESS": false,
+    "WINDOW_SIZE": "1920,1080",
+    "IMPLICIT_WAIT": 10,
+    "PAGE_LOAD_TIMEOUT": 30
+  },
+  "EVIDENCE_PROPERTIES": {
+    "SCREENSHOT_ON_FAILURE": true,
+    "SCREENSHOT_ON_SUCCESS": false,
+    "SCREENSHOT_PATH": "./test-results/screenshots",
+    "VIDEO_RECORDING": true,
+    "VIDEO_PATH": "./test-results/videos"
+  }
+}
+```
+
 ## Commands
 
 Run all Cucumber scenarios:
