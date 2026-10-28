@@ -79,6 +79,7 @@ test("opens the practice website and verifies the page title", async ({ page }) 
 | `BASE_URL` | Sets the Playwright base URL | Not set |
 | `HEADLESS` | Set to `false` to run a browser visibly | `true` |
 | `BROWSER` | Selects `chromium`, `firefox`, or `webkit` for Cucumber hooks | `chromium` |
+| `SLOW_MOTION` | Delays browser operations by the specified milliseconds | `200` |
 
 Example:
 

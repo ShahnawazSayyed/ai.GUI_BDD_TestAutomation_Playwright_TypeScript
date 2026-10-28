@@ -20,6 +20,9 @@ export default defineConfig({
     baseURL: process.env.BASE_URL,
     headless: browser.HEADLESS,
     viewport: { width, height },
+    launchOptions: {
+      slowMo: browser.SLOW_MOTION
+    },
     trace: "retain-on-failure",
     screenshot: evidence.SCREENSHOT_ON_FAILURE ? "only-on-failure" : "off",
     video: evidence.VIDEO_RECORDING ? "retain-on-failure" : "off"

@@ -53,7 +53,8 @@ Before(async function (this: AutomationWorld) {
       : chromium;
 
   this.browser = await browserType.launch({
-    headless: browserProperties.HEADLESS
+    headless: browserProperties.HEADLESS,
+    slowMo: browserProperties.SLOW_MOTION
   });
   const [width, height] = browserProperties.WINDOW_SIZE
     .split(",")
@@ -91,6 +92,15 @@ After(async function (this: AutomationWorld, scenario) {
     await this.attach(fs.readFileSync(screenshotPath), "image/png");
   }
 
+  const video = evidenceProperties.VIDEO_RECORDING ? this.page?.video() : undefined;
   await this.context?.close();
+
+  if (video) {
+    const videoPath = await video.path();
+    if (fs.existsSync(videoPath)) {
+      await this.attach(fs.readFileSync(videoPath), "video/webm");
+    }
+  }
+
   await this.browser?.close();
 });

@@ -3,6 +3,7 @@
     "BROWSER": "chrome",
     "HEADLESS": false,
     "WINDOW_SIZE": "1920,1080",
+    "SLOW_MOTION": 200,
     "IMPLICIT_WAIT": 10,
     "PAGE_LOAD_TIMEOUT": 30
   },

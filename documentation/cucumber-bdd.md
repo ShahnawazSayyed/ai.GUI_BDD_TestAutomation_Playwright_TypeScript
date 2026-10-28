@@ -63,6 +63,8 @@ Given("I navigate to {string}", async function (url: string) {
 
 Reports are written to `test-results/cucumber-report.html` by default.
 
+Screenshots captured on failures or successes and completed Playwright WebM recordings are attached to the scenario and embedded in the generated Cucumber HTML report.
+
 ## Common Configuration
 
 Browser and evidence settings are loaded from `config/commonConfig.json`:
@@ -73,6 +75,7 @@ Browser and evidence settings are loaded from `config/commonConfig.json`:
     "BROWSER": "chrome",
     "HEADLESS": false,
     "WINDOW_SIZE": "1920,1080",
+    "SLOW_MOTION": 200,
     "IMPLICIT_WAIT": 10,
     "PAGE_LOAD_TIMEOUT": 30
   },

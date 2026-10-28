@@ -5,6 +5,7 @@ export interface BrowserProperties {
   BROWSER: "chrome" | "chromium" | "firefox" | "webkit";
   HEADLESS: boolean;
   WINDOW_SIZE: string;
+  SLOW_MOTION: number;
   IMPLICIT_WAIT: number;
   PAGE_LOAD_TIMEOUT: number;
 }
@@ -45,6 +46,19 @@ export function loadCommonConfig(): CommonConfig {
 
   if (process.env.HEADLESS !== undefined) {
     config.BROWSER_PROPERTIES.HEADLESS = process.env.HEADLESS.toLowerCase() !== "false";
+  }
+
+  if (!Number.isFinite(config.BROWSER_PROPERTIES.SLOW_MOTION) ||
+    config.BROWSER_PROPERTIES.SLOW_MOTION < 0) {
+    throw new Error("SLOW_MOTION must be a non-negative number of milliseconds");
+  }
+
+  if (process.env.SLOW_MOTION !== undefined) {
+    const slowMotion = Number(process.env.SLOW_MOTION);
+    if (!Number.isFinite(slowMotion) || slowMotion < 0) {
+      throw new Error("SLOW_MOTION must be a non-negative number of milliseconds");
+    }
+    config.BROWSER_PROPERTIES.SLOW_MOTION = slowMotion;
   }
 
   return config;
