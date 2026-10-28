@@ -6,7 +6,7 @@ const evidence = commonConfig.EVIDENCE_PROPERTIES;
 const [width, height] = browser.WINDOW_SIZE.split(",").map((value) => Number(value.trim()));
 
 export default defineConfig({
-  testDir: "..",
+  testDir: "../tests",
   timeout: 30_000,
   expect: {
     timeout: 5_000

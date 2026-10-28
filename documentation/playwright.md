@@ -61,6 +61,17 @@ Page objects are stored in `playwright/pages/`:
 
 The `PageManager` in `playwright/support/pageManager.ts` creates and exposes page objects so step definitions use one shared Playwright `Page` instance.
 
+## Native Playwright Tests
+
+Native Playwright tests use the `.spec.ts` extension and are stored in `playwright/tests/`.
+
+```typescript
+test("opens the practice website and verifies the page title", async ({ page }) => {
+  await page.goto("https://testautomationpractice.blogspot.com/");
+  await expect(page).toHaveTitle("Automation Testing Practice");
+});
+```
+
 ## Environment Variables
 
 | Variable | Purpose | Default |
