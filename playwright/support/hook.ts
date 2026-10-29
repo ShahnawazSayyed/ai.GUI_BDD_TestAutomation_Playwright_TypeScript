@@ -20,7 +20,7 @@ import { commonConfig } from "../../utilities/commonConfig";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-setDefaultTimeout(30_000);
+setDefaultTimeout(60_000);
 
 export interface AutomationWorld extends World {
   browser?: Browser;

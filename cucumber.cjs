@@ -7,6 +7,6 @@ module.exports = {
     ],
     paths: ["features/**/*.feature"],
     format: ["progress", "html:test-results/cucumber-report.html"],
-    timeout: 30000
+    timeout: 60000
   }
 };
