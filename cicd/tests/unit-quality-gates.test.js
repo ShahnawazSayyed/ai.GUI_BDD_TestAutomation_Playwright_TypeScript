@@ -94,7 +94,10 @@ test("test impact agent and workflow are configured", () => {
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /fromJSON\(needs\.analyze\.outputs\.browsers\)/);
   assert.match(workflow, /test-impact-report/);
+  assert.match(workflow, /node cicd\/write-impact-outputs\.js/);
+  assert.doesNotMatch(workflow, /\$\{JSON\.stringify|`browsers=|`cucumberFiles=|`playwrightFiles=/);
   assert.equal(typeof packageJson.scripts["test:impact"], "string");
+  assert.ok(fs.existsSync(path.join(projectRoot, "cicd/write-impact-outputs.js")));
 });
 
 test("failure diagnosis agent and module are configured", () => {
