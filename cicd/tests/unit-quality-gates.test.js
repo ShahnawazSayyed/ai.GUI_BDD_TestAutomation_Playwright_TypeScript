@@ -96,3 +96,23 @@ test("test impact agent and workflow are configured", () => {
   assert.match(workflow, /test-impact-report/);
   assert.equal(typeof packageJson.scripts["test:impact"], "string");
 });
+
+test("failure diagnosis agent and module are configured", () => {
+  const agent = fs.readFileSync(
+    path.join(projectRoot, ".github/agents/test-failure-diagnosis.agent.md"),
+    "utf8"
+  );
+  const workflow = fs.readFileSync(
+    path.join(projectRoot, ".github/workflows/ci.yml"),
+    "utf8"
+  );
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(projectRoot, "package.json"), "utf8")
+  );
+
+  assert.match(agent, /Locator change/);
+  assert.match(agent, /Application regression/);
+  assert.match(workflow, /Diagnose .* failure evidence/);
+  assert.equal(typeof packageJson.scripts["test:diagnose"], "string");
+  assert.ok(fs.existsSync(path.join(projectRoot, "utilities/testFailureDiagnosis.js")));
+});

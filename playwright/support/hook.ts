@@ -27,6 +27,7 @@ export interface AutomationWorld extends World {
   context?: BrowserContext;
   page?: Page;
   pageManager?: PageManager;
+  consoleErrors?: string[];
 }
 
 export class AutomationWorldImpl extends World implements AutomationWorld {
@@ -34,6 +35,7 @@ export class AutomationWorldImpl extends World implements AutomationWorld {
   context?: BrowserContext;
   page?: Page;
   pageManager?: PageManager;
+  consoleErrors?: string[];
 
   constructor(options: IWorldOptions) {
     super(options);
@@ -66,7 +68,18 @@ Before(async function (this: AutomationWorld) {
       ? { dir: path.resolve(process.cwd(), evidenceProperties.VIDEO_PATH) }
       : undefined
   });
+  this.consoleErrors = [];
+  await this.context.tracing.start({
+    screenshots: true,
+    snapshots: true,
+    sources: true
+  });
   this.page = await this.context.newPage();
+  this.page.on("console", (message) => {
+    if (message.type() === "error") {
+      this.consoleErrors?.push(message.text());
+    }
+  });
   this.page.setDefaultTimeout(browserProperties.IMPLICIT_WAIT * 1000);
   this.page.setDefaultNavigationTimeout(browserProperties.PAGE_LOAD_TIMEOUT * 1000);
   this.pageManager = new PageManager(this.page);
@@ -92,7 +105,28 @@ After(async function (this: AutomationWorld, scenario) {
     await this.attach(fs.readFileSync(screenshotPath), "image/png");
   }
 
+  if (this.consoleErrors?.length && failed) {
+    const logsDirectory = path.resolve(process.cwd(), "test-results/console");
+    fs.mkdirSync(logsDirectory, { recursive: true });
+    const consolePath = path.join(
+      logsDirectory,
+      `${scenario.pickle.name.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "scenario"}.log`
+    );
+    fs.writeFileSync(consolePath, this.consoleErrors.join("\n"));
+  }
+
   const video = evidenceProperties.VIDEO_RECORDING ? this.page?.video() : undefined;
+  if (failed) {
+    const tracesDirectory = path.resolve(process.cwd(), "test-results/traces");
+    fs.mkdirSync(tracesDirectory, { recursive: true });
+    const tracePath = path.join(
+      tracesDirectory,
+      `${scenario.pickle.name.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "scenario"}.zip`
+    );
+    await this.context?.tracing.stop({ path: tracePath });
+  } else {
+    await this.context?.tracing.stop();
+  }
   await this.context?.close();
 
   if (video) {

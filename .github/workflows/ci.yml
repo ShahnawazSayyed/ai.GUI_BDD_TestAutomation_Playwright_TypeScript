@@ -73,6 +73,12 @@ jobs:
           HEADLESS: true
         run: npm run test:ci:cucumber -- ${{ matrix.browser }}
 
+      - name: Diagnose Cucumber failure evidence
+        if: failure()
+        env:
+          BROWSER: ${{ matrix.browser }}
+        run: npm run test:diagnose -- --input test-results --browser ${{ matrix.browser }}
+
       - name: Upload Cucumber artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -82,6 +88,7 @@ jobs:
             test-results/cucumber-report-${{ matrix.browser }}.html
             test-results/screenshots/**/*.png
             test-results/videos/**/*.webm
+            test-results/failure-diagnosis/
           if-no-files-found: ignore
           retention-days: 14
 
@@ -116,6 +123,12 @@ jobs:
           HEADLESS: true
         run: npm run test:ci:playwright -- ${{ matrix.browser }}
 
+      - name: Diagnose Playwright failure evidence
+        if: failure()
+        env:
+          BROWSER: ${{ matrix.browser }}
+        run: npm run test:diagnose -- --input test-results --browser ${{ matrix.browser }}
+
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -124,5 +137,6 @@ jobs:
           path: |
             playwright-report/
             test-results/
+            test-results/failure-diagnosis/
           if-no-files-found: ignore
           retention-days: 14

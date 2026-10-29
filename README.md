@@ -89,6 +89,9 @@ npm run test:discover -- --url https://testautomationpractice.blogspot.com/ --ma
 
 # Analyze tests impacted by a git range
 npm run test:impact -- --base main --head HEAD
+
+# Diagnose failure evidence from Playwright or Cucumber artifacts
+npm run test:diagnose -- --input test-results --browser chromium
 ```
 
 The Cucumber HTML report is generated at `test-results/cucumber-report.html`. Evidence such as screenshots and videos is controlled by `config/commonConfig.json`.
