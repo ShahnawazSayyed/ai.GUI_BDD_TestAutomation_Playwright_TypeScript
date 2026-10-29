@@ -137,3 +137,25 @@ test("self-healing locator agent and module are configured", () => {
   assert.equal(typeof packageJson.scripts["test:heal-locators"], "string");
   assert.ok(fs.existsSync(path.join(projectRoot, "utilities/selfHealingLocator.js")));
 });
+
+test("coverage gap agent, workflow, and module are configured", () => {
+  const agent = fs.readFileSync(
+    path.join(projectRoot, ".github/agents/coverage-gap.agent.md"),
+    "utf8"
+  );
+  const workflow = fs.readFileSync(
+    path.join(projectRoot, ".github/workflows/coverage-gap.yml"),
+    "utf8"
+  );
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(projectRoot, "package.json"), "utf8")
+  );
+
+  assert.match(agent, /Never create or modify source tests without explicit approval/);
+  assert.match(workflow, /schedule:/);
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /create_approved_tests/);
+  assert.match(workflow, /create-pull-request@v7/);
+  assert.equal(typeof packageJson.scripts["test:coverage-gaps"], "string");
+  assert.ok(fs.existsSync(path.join(projectRoot, "utilities/testCoverageGaps.js")));
+});

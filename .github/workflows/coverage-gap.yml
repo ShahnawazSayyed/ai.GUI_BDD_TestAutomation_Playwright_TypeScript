@@ -1,0 +1,102 @@
+name: Periodic Coverage Gap Analysis
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Target website URL
+        required: false
+        default: https://testautomationpractice.blogspot.com/
+      browser:
+        description: Browser used for discovery
+        required: true
+        default: chromium
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+      create_approved_tests:
+        description: Create a reviewed feature-file pull request for approved gaps
+        required: true
+        default: false
+        type: boolean
+      max_pages:
+        description: Maximum pages to discover
+        required: false
+        default: "10"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  analyze:
+    name: Analyze coverage gaps
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install browser with system dependencies
+        run: npx playwright install --with-deps ${{ inputs.browser || 'chromium' }}
+
+      - name: Analyze coverage gaps
+        env:
+          BASE_URL: ${{ inputs.url || vars.DEPLOYMENT_URL || 'https://testautomationpractice.blogspot.com/' }}
+          BROWSER: ${{ inputs.browser || 'chromium' }}
+        run: |
+          APPROVAL_FLAG=""
+          if [ "${{ inputs.create_approved_tests }}" = "true" ]; then
+            APPROVAL_FLAG="--approve --max-approved 10"
+          fi
+          npm run test:coverage-gaps -- --url "$BASE_URL" --browser "$BROWSER" --max-pages "${{ inputs.max_pages || '10' }}" $APPROVAL_FLAG
+
+      - name: Add coverage summary to GitHub job
+        if: always()
+        run: |
+          if [ -f test-results/coverage-gaps/coverage-gaps.md ]; then
+            cat test-results/coverage-gaps/coverage-gaps.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Create pull request for approved missing tests
+        if: ${{ inputs.create_approved_tests == true && hashFiles('features/coverage-gaps.generated.feature') != '' }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automated/approved-coverage-gaps
+          delete-branch: true
+          title: "test: add approved coverage gap scenarios"
+          body: |
+            ## Approved coverage gap scenarios
+
+            These scenarios were created only because `create_approved_tests` was enabled.
+            Review the generated feature, reusable and missing steps, and browser results before merging.
+
+            See the coverage-gap report artifact for priority and evidence.
+          commit-message: "test: add approved coverage gap scenarios"
+
+      - name: Upload coverage-gap report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-gap-report
+          path: |
+            test-results/coverage-gaps/
+            features/coverage-gaps.generated.feature
+          if-no-files-found: ignore
+          retention-days: 30

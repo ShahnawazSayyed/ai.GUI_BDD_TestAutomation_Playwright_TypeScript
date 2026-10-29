@@ -116,6 +116,8 @@ Environment variables `BROWSER`, `HEADLESS`, and `BASE_URL` can override support
 - [GitHub Actions CI/CD](cicd/github-actions.md) - Workflow, browser matrix, reports, and artifacts.
 - [Browser installation and parallel execution](documentation/browser-installation-and-parallel-execution.md) - Install Chromium, Firefox, and WebKit and configure worker-based parallel runs.
 - [Self-healing locator agent](.github/agents/self-healing-locator.agent.md) - Review accessible, role, label, test-ID, and stable locator candidates without automatic code changes.
+- [Coverage Gap agent](.github/agents/coverage-gap.agent.md) - Prioritize gaps across discovered pages, Gherkin, steps, branch changes, and production incidents; creates tests only with explicit approval.
+- [Coverage Gap Analysis](documentation/coverage-gap-analysis.md) - Local and GitHub Actions usage, incident input format, approval behavior, and generated reports.
 - [Playwright documentation](documentation/playwright.md) - Browser setup, configuration, Playwright commands, and the Page Object Model.
 - [Cucumber BDD documentation](documentation/cucumber-bdd.md) - Feature files, step definitions, hooks, reporting, shared configuration, and adding scenarios.
 

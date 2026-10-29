@@ -42,6 +42,7 @@
     "test:impact": "node utilities/testImpactAnalysis.js",
     "test:diagnose": "node utilities/testFailureDiagnosis.js",
     "test:heal-locators": "node utilities/selfHealingLocator.js",
+    "test:coverage-gaps": "node utilities/testCoverageGaps.js",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
