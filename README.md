@@ -115,6 +115,7 @@ Environment variables `BROWSER`, `HEADLESS`, and `BASE_URL` can override support
 - [CI and CD quality gates](cicd/quality-gates.md) - Unit, integration, and post-deployment quality gates.
 - [GitHub Actions CI/CD](cicd/github-actions.md) - Workflow, browser matrix, reports, and artifacts.
 - [Browser installation and parallel execution](documentation/browser-installation-and-parallel-execution.md) - Install Chromium, Firefox, and WebKit and configure worker-based parallel runs.
+- [Self-healing locator agent](.github/agents/self-healing-locator.agent.md) - Review accessible, role, label, test-ID, and stable locator candidates without automatic code changes.
 - [Playwright documentation](documentation/playwright.md) - Browser setup, configuration, Playwright commands, and the Page Object Model.
 - [Cucumber BDD documentation](documentation/cucumber-bdd.md) - Feature files, step definitions, hooks, reporting, shared configuration, and adding scenarios.
 

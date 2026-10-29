@@ -1,0 +1,71 @@
+name: Self-Healing Locator Review
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Target website URL
+        required: true
+      browser:
+        description: Browser used for DOM comparison
+        required: true
+        default: chromium
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+      selector:
+        description: Existing failing Playwright selector or selector value
+        required: true
+      description:
+        description: Human-readable description of the intended element
+        required: true
+      source_file:
+        description: Optional repository-relative source file for patch preview
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Generate locator review
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install browser with system dependencies
+        run: npx playwright install --with-deps ${{ inputs.browser }}
+
+      - name: Analyze current DOM and generate review-only candidates
+        env:
+          BROWSER: ${{ inputs.browser }}
+        run: >
+          npm run test:heal-locators --
+          --url "${{ inputs.url }}"
+          --browser "${{ inputs.browser }}"
+          --selector "${{ inputs.selector }}"
+          --description "${{ inputs.description }}"
+          --source-file "${{ inputs.source_file }}"
+
+      - name: Upload locator healing review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: locator-healing-review
+          path: test-results/locator-healing/
+          if-no-files-found: ignore
+          retention-days: 14

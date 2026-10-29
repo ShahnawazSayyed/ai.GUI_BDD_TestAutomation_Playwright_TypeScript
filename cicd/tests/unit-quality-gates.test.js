@@ -116,3 +116,24 @@ test("failure diagnosis agent and module are configured", () => {
   assert.equal(typeof packageJson.scripts["test:diagnose"], "string");
   assert.ok(fs.existsSync(path.join(projectRoot, "utilities/testFailureDiagnosis.js")));
 });
+
+test("self-healing locator agent and module are configured", () => {
+  const agent = fs.readFileSync(
+    path.join(projectRoot, ".github/agents/self-healing-locator.agent.md"),
+    "utf8"
+  );
+  const workflow = fs.readFileSync(
+    path.join(projectRoot, ".github/workflows/self-healing-locator.yml"),
+    "utf8"
+  );
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(projectRoot, "package.json"), "utf8")
+  );
+
+  assert.match(agent, /NEVER modify a locator automatically/);
+  assert.match(agent, /candidates\.json/);
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /locator-healing-review/);
+  assert.equal(typeof packageJson.scripts["test:heal-locators"], "string");
+  assert.ok(fs.existsSync(path.join(projectRoot, "utilities/selfHealingLocator.js")));
+});
