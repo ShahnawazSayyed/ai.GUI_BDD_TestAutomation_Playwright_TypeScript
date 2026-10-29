@@ -42,7 +42,7 @@ jobs:
         run: |
           git fetch origin ${{ github.event.pull_request.base.ref || 'master' }} --depth=50
           npm run test:impact -- --base "$BASE_SHA" --head "$HEAD_SHA"
-          node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('test-results/test-impact/impact.json'));const out=process.env.GITHUB_OUTPUT;fs.appendFileSync(out,`browsers=${JSON.stringify(r.browsers)}\n`);fs.appendFileSync(out,`cucumberFiles=${r.recommendedCucumber.join(';')}\n`);fs.appendFileSync(out,`playwrightFiles=${r.recommendedPlaywright.join(';')}\n`)"
+          node cicd/write-impact-outputs.js
 
       - name: Run type-check and quality gates
         env:
