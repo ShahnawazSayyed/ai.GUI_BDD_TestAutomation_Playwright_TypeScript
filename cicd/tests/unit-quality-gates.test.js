@@ -159,3 +159,25 @@ test("coverage gap agent, workflow, and module are configured", () => {
   assert.equal(typeof packageJson.scripts["test:coverage-gaps"], "string");
   assert.ok(fs.existsSync(path.join(projectRoot, "utilities/testCoverageGaps.js")));
 });
+
+test("exploratory testing agent, workflow, and module are configured", () => {
+  const agent = fs.readFileSync(
+    path.join(projectRoot, ".github/agents/exploratory-testing.agent.md"),
+    "utf8"
+  );
+  const workflow = fs.readFileSync(
+    path.join(projectRoot, ".github/workflows/exploratory-testing.yml"),
+    "utf8"
+  );
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(projectRoot, "package.json"), "utf8")
+  );
+
+  assert.match(agent, /Never click payment/);
+  assert.match(workflow, /schedule:/);
+  assert.match(workflow, /authorize_destructive/);
+  assert.match(workflow, /max_pages/);
+  assert.match(workflow, /max_actions/);
+  assert.equal(typeof packageJson.scripts["test:exploratory"], "string");
+  assert.ok(fs.existsSync(path.join(projectRoot, "utilities/exploratoryTesting.js")));
+});

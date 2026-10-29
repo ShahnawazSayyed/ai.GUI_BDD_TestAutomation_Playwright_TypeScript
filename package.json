@@ -43,6 +43,7 @@
     "test:diagnose": "node utilities/testFailureDiagnosis.js",
     "test:heal-locators": "node utilities/selfHealingLocator.js",
     "test:coverage-gaps": "node utilities/testCoverageGaps.js",
+    "test:exploratory": "node utilities/exploratoryTesting.js",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
