@@ -61,3 +61,18 @@ test("CD workflow has a deployment URL fallback", () => {
   assert.match(workflow, /DEFAULT_URL:\s*https:\/\/testautomationpractice\.blogspot\.com\//);
   assert.match(workflow, /test:ci:integration/);
 });
+
+test("test discovery agent and module are configured", () => {
+  const agent = fs.readFileSync(
+    path.join(projectRoot, ".github/agents/test-discovery.agent.md"),
+    "utf8"
+  );
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(projectRoot, "package.json"), "utf8")
+  );
+
+  assert.match(agent, /^description:\s*"/m);
+  assert.match(agent, /features\/\*\*\/\*\.feature/);
+  assert.equal(typeof packageJson.scripts["test:discover"], "string");
+  assert.ok(fs.existsSync(path.join(projectRoot, "utilities/testDiscovery.js")));
+});

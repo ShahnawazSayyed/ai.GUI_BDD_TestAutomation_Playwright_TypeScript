@@ -83,6 +83,9 @@ npm run test:webkit
 
 # Run the Cucumber suite concurrently in Chromium, Firefox, and WebKit
 npm run test:browsers
+
+# Discover website coverage candidates and generate a BDD draft
+npm run test:discover -- --url https://testautomationpractice.blogspot.com/ --max-pages 5
 ```
 
 The Cucumber HTML report is generated at `test-results/cucumber-report.html`. Evidence such as screenshots and videos is controlled by `config/commonConfig.json`.
