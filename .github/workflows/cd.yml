@@ -55,14 +55,15 @@ jobs:
         env:
           DISPATCH_URL: ${{ inputs.deployment_url }}
           VARIABLE_URL: ${{ vars.DEPLOYMENT_URL }}
+          DEFAULT_URL: https://testautomationpractice.blogspot.com/
         run: |
           if [ -n "$DISPATCH_URL" ]; then
             echo "url=$DISPATCH_URL" >> "$GITHUB_OUTPUT"
           elif [ -n "$VARIABLE_URL" ]; then
             echo "url=$VARIABLE_URL" >> "$GITHUB_OUTPUT"
           else
-            echo "DEPLOYMENT_URL is not configured."
-            exit 1
+            echo "No deployment URL variable was configured; using the default test target."
+            echo "url=$DEFAULT_URL" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run post-CD integration quality gate

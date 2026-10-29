@@ -34,6 +34,9 @@ Configure the deployed environment URL with a repository variable named
 - `EXPECTED_TEXT`: required text in the deployed response body
 - `EXPECTED_TITLE`: exact HTML title
 
+If `DEPLOYMENT_URL` is not configured, the post-CD workflow uses
+`https://testautomationpractice.blogspot.com/` as a fallback target.
+
 The manual workflow requires a deployment URL and accepts an environment name.
 The same integration gate script checks the final HTTP status, response body,
 and optional title or text expectations.

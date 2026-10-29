@@ -50,3 +50,14 @@ test("GitHub Actions workflow has cross-browser quality gates", () => {
   assert.match(workflow, /test:ci:quality-gates/);
   assert.match(workflow, /browser:\s*\[chromium,\s*firefox,\s*webkit\]/);
 });
+
+test("CD workflow has a deployment URL fallback", () => {
+  const workflow = fs.readFileSync(
+    path.join(projectRoot, ".github/workflows/cd.yml"),
+    "utf8"
+  );
+
+  assert.match(workflow, /DEPLOYMENT_URL/);
+  assert.match(workflow, /DEFAULT_URL:\s*https:\/\/testautomationpractice\.blogspot\.com\//);
+  assert.match(workflow, /test:ci:integration/);
+});
