@@ -41,6 +41,10 @@ above if the executable is not found.
 
 ## Cucumber Parallel Execution
 
+GitHub Actions executes Cucumber and Playwright CI jobs with one worker per
+browser matrix job. The local commands below remain configurable for developer
+machines.
+
 Cucumber uses one Playwright browser process per scenario worker. The following
 commands run scenarios with four parallel workers:
 

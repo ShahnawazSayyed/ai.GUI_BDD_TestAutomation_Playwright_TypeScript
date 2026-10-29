@@ -1,4 +1,3 @@
-import { expect } from "@playwright/test";
 import { Given, Then } from "@cucumber/cucumber";
 import { AutomationWorld } from "../support/hook";
 
@@ -13,6 +12,5 @@ Then("The page title should be {string}", async function (this: AutomationWorld,
   if (!this.pageManager) {
     throw new Error("Playwright page manager was not initialized");
   }
-  const actualTitle = await this.pageManager.getTestAutomationPracticePage().getTitle();
-  expect(actualTitle).toBe(expectedTitle);
+  await this.pageManager.getTestAutomationPracticePage().waitForTitle(expectedTitle);
 });

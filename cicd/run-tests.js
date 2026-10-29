@@ -4,7 +4,7 @@ const path = require("node:path");
 
 const runner = process.argv[2];
 const browser = (process.argv[3] || process.env.BROWSER || "chromium").toLowerCase();
-const workers = process.env.WORKERS || "2";
+const workers = "1";
 const acceptedBrowsers = ["chromium", "firefox", "webkit"];
 
 if (!["cucumber", "playwright"].includes(runner)) {

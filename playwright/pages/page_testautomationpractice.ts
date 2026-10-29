@@ -8,6 +8,10 @@ export class TestAutomationPracticePage extends CommonPage {
   async isTitleEqual(expectedTitle: string): Promise<boolean> {
     return (await this.getTitle()) === expectedTitle;
   }
+
+  async waitForTitle(expectedTitle: string, timeout = 30_000): Promise<void> {
+    await super.waitForTitle(expectedTitle, timeout);
+  }
 }
 
 export default TestAutomationPracticePage;

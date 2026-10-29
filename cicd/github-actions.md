@@ -26,8 +26,8 @@ The workflow runs on:
 GitHub Actions uses Node.js 24 because that version satisfies the Node runtime
 requirement of Cucumber 13. Local runs should use Node.js 22, 24, or 26+.
 
-Browser runs use headless mode and two parallel workers. Playwright retries and
-failure handling are enabled by the existing configuration when `CI=true`.
+Browser runs use headless mode and one worker. Playwright retries and failure
+handling are enabled by the existing configuration when `CI=true`.
 
 If a browser matrix job fails, the workflow keeps running the remaining browser
 jobs. Reports, screenshots, videos, Playwright traces, and Playwright HTML
@@ -42,9 +42,10 @@ npm run test:ci:cucumber -- chromium
 npm run test:ci:playwright -- firefox
 ```
 
-Override the worker count with the `WORKERS` environment variable:
+The CI wrapper is fixed to one worker for all browser matrix jobs. For a local
+non-CI run with a custom Playwright worker count, use:
 
 ```powershell
 $env:WORKERS="4"
-npm run test:ci:playwright -- webkit
+npm run test:ui:parallel
 ```
