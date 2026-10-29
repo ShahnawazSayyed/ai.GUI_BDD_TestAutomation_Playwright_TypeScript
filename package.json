@@ -12,6 +12,9 @@
   },
   "license": "ISC",
   "author": "",
+  "engines": {
+    "node": "22 || 24 || >=26"
+  },
   "type": "commonjs",
   "main": "index.js",
   "scripts": {

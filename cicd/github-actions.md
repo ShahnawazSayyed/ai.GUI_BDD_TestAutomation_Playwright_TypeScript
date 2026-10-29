@@ -23,6 +23,9 @@ The workflow runs on:
 
 ## CI behavior
 
+GitHub Actions uses Node.js 24 because that version satisfies the Node runtime
+requirement of Cucumber 13. Local runs should use Node.js 22, 24, or 26+.
+
 Browser runs use headless mode and two parallel workers. Playwright retries and
 failure handling are enabled by the existing configuration when `CI=true`.
 

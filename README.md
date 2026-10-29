@@ -9,7 +9,7 @@ This project is a TypeScript UI test automation framework that combines:
 
 ## Prerequisites
 
-- Node.js 18 or later
+- Node.js 22, 24, or 26 or later (Cucumber 13 requirement)
 - npm
 
 ## Setup
