@@ -30,6 +30,8 @@
     "test:ui:firefox": "cross-env BROWSERS=firefox playwright test --config=playwright/config/playwright.config.ts --project=firefox",
     "test:ui:webkit": "cross-env BROWSERS=webkit playwright test --config=playwright/config/playwright.config.ts --project=webkit",
     "test:ui:all": "cross-env BROWSERS=chromium,firefox,webkit playwright test --config=playwright/config/playwright.config.ts",
+    "test:ci:cucumber": "node cicd/run-tests.js cucumber",
+    "test:ci:playwright": "node cicd/run-tests.js playwright",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -103,6 +103,7 @@ Environment variables `BROWSER`, `HEADLESS`, and `BASE_URL` can override support
 
 ## Documentation
 
+- [GitHub Actions CI/CD](cicd/github-actions.md) - Workflow, browser matrix, reports, and artifacts.
 - [Browser installation and parallel execution](documentation/browser-installation-and-parallel-execution.md) - Install Chromium, Firefox, and WebKit and configure worker-based parallel runs.
 - [Playwright documentation](documentation/playwright.md) - Browser setup, configuration, Playwright commands, and the Page Object Model.
 - [Cucumber BDD documentation](documentation/cucumber-bdd.md) - Feature files, step definitions, hooks, reporting, shared configuration, and adding scenarios.
