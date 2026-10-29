@@ -36,6 +36,13 @@ jobs:
       - name: Run TypeScript type-check
         run: npm run typecheck
 
+      - name: Run unit and integration quality gates
+        env:
+          BASE_URL: https://testautomationpractice.blogspot.com/
+          EXPECTED_TITLE: Automation Testing Practice
+          INTEGRATION_TIMEOUT_MS: 30000
+        run: npm run test:ci:quality-gates
+
   cucumber:
     name: Cucumber / ${{ matrix.browser }}
     runs-on: ubuntu-latest

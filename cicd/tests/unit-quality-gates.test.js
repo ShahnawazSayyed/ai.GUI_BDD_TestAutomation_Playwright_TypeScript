@@ -1,0 +1,52 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+
+const projectRoot = path.resolve(__dirname, "../..");
+
+test("package scripts include CI browser runners", () => {
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(projectRoot, "package.json"), "utf8")
+  );
+
+  assert.equal(typeof packageJson.scripts["test:ci:cucumber"], "string");
+  assert.equal(typeof packageJson.scripts["test:ci:playwright"], "string");
+  assert.equal(typeof packageJson.scripts["test:ci:quality-gates"], "string");
+});
+
+test("CI runner supports only configured browsers", () => {
+  const runner = fs.readFileSync(
+    path.join(projectRoot, "cicd/run-tests.js"),
+    "utf8"
+  );
+
+  for (const browser of ["chromium", "firefox", "webkit"]) {
+    assert.match(runner, new RegExp(browser));
+  }
+  assert.match(runner, /const workers = "1"/);
+});
+
+test("common browser configuration has valid shape", () => {
+  const config = JSON.parse(
+    fs.readFileSync(path.join(projectRoot, "config/commonConfig.json"), "utf8")
+  );
+
+  assert.ok(config.BROWSER_PROPERTIES);
+  assert.ok(config.EVIDENCE_PROPERTIES);
+  assert.match(
+    config.BROWSER_PROPERTIES.WINDOW_SIZE,
+    /^\d+\s*,\s*\d+$/
+  );
+});
+
+test("GitHub Actions workflow has cross-browser quality gates", () => {
+  const workflow = fs.readFileSync(
+    path.join(projectRoot, ".github/workflows/ci.yml"),
+    "utf8"
+  );
+
+  assert.match(workflow, /node-version:\s*24/);
+  assert.match(workflow, /test:ci:quality-gates/);
+  assert.match(workflow, /browser:\s*\[chromium,\s*firefox,\s*webkit\]/);
+});

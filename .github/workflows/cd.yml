@@ -1,0 +1,74 @@
+name: CD Post-Deployment Quality Gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: URL of the environment deployed by the CD process
+        required: true
+        type: string
+      environment:
+        description: Deployment environment name
+        required: false
+        default: production
+        type: string
+  workflow_run:
+    workflows: ["Cross-Browser CI"]
+    types: ["completed"]
+
+concurrency:
+  group: post-deployment-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  post-deployment:
+    name: Integration gate / ${{ inputs.environment || 'production' }}
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       (github.event.workflow_run.head_branch == 'main' ||
+        github.event.workflow_run.head_branch == 'master'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: ${{ inputs.environment || 'production' }}
+      url: ${{ inputs.deployment_url || vars.DEPLOYMENT_URL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve deployment target
+        id: target
+        env:
+          DISPATCH_URL: ${{ inputs.deployment_url }}
+          VARIABLE_URL: ${{ vars.DEPLOYMENT_URL }}
+        run: |
+          if [ -n "$DISPATCH_URL" ]; then
+            echo "url=$DISPATCH_URL" >> "$GITHUB_OUTPUT"
+          elif [ -n "$VARIABLE_URL" ]; then
+            echo "url=$VARIABLE_URL" >> "$GITHUB_OUTPUT"
+          else
+            echo "DEPLOYMENT_URL is not configured."
+            exit 1
+          fi
+
+      - name: Run post-CD integration quality gate
+        env:
+          DEPLOYMENT_URL: ${{ steps.target.outputs.url }}
+          EXPECTED_TEXT: ${{ vars.EXPECTED_TEXT }}
+          EXPECTED_TITLE: ${{ vars.EXPECTED_TITLE }}
+          INTEGRATION_TIMEOUT_MS: 30000
+        run: npm run test:ci:integration

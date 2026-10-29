@@ -35,6 +35,9 @@
     "test:ui:all": "cross-env BROWSERS=chromium,firefox,webkit playwright test --config=playwright/config/playwright.config.ts",
     "test:ci:cucumber": "node cicd/run-tests.js cucumber",
     "test:ci:playwright": "node cicd/run-tests.js playwright",
+    "test:ci:unit": "node --test cicd/tests/unit-quality-gates.test.js",
+    "test:ci:integration": "node cicd/tests/integration-quality-gates.js",
+    "test:ci:quality-gates": "npm run test:ci:unit && npm run test:ci:integration",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

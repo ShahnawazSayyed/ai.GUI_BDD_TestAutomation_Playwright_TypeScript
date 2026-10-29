@@ -103,6 +103,7 @@ Environment variables `BROWSER`, `HEADLESS`, and `BASE_URL` can override support
 
 ## Documentation
 
+- [CI and CD quality gates](cicd/quality-gates.md) - Unit, integration, and post-deployment quality gates.
 - [GitHub Actions CI/CD](cicd/github-actions.md) - Workflow, browser matrix, reports, and artifacts.
 - [Browser installation and parallel execution](documentation/browser-installation-and-parallel-execution.md) - Install Chromium, Firefox, and WebKit and configure worker-based parallel runs.
 - [Playwright documentation](documentation/playwright.md) - Browser setup, configuration, Playwright commands, and the Page Object Model.
