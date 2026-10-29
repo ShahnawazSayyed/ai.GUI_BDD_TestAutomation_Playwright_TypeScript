@@ -6,6 +6,10 @@ const runner = process.argv[2];
 const browser = (process.argv[3] || process.env.BROWSER || "chromium").toLowerCase();
 const workers = "1";
 const acceptedBrowsers = ["chromium", "firefox", "webkit"];
+const testFiles = (process.env.TEST_FILES || "")
+  .split(/[,;\n]/)
+  .map((file) => file.trim())
+  .filter(Boolean);
 
 if (!["cucumber", "playwright"].includes(runner)) {
   console.error("Usage: node cicd/run-tests.js <cucumber|playwright> <browser>");
@@ -28,7 +32,8 @@ const args = runner === "cucumber"
       "--format",
       "progress",
       "--format",
-      `html:test-results/cucumber-report-${browser}.html`
+      `html:test-results/cucumber-report-${browser}.html`,
+      ...testFiles
     ]
   : [
       "playwright",
@@ -36,7 +41,8 @@ const args = runner === "cucumber"
       "--config=playwright/config/playwright.config.ts",
       `--project=${browser}`,
       "--workers",
-      workers
+      workers,
+      ...testFiles
     ];
 
 const result = spawnSync(executable, args, {

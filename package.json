@@ -39,6 +39,7 @@
     "test:ci:integration": "node cicd/tests/integration-quality-gates.js",
     "test:ci:quality-gates": "npm run test:ci:unit && npm run test:ci:integration",
     "test:discover": "node utilities/testDiscovery.js",
+    "test:impact": "node utilities/testImpactAnalysis.js",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -76,3 +76,23 @@ test("test discovery agent and module are configured", () => {
   assert.equal(typeof packageJson.scripts["test:discover"], "string");
   assert.ok(fs.existsSync(path.join(projectRoot, "utilities/testDiscovery.js")));
 });
+
+test("test impact agent and workflow are configured", () => {
+  const agent = fs.readFileSync(
+    path.join(projectRoot, ".github/agents/test-impact.agent.md"),
+    "utf8"
+  );
+  const workflow = fs.readFileSync(
+    path.join(projectRoot, ".github/workflows/test-impact.yml"),
+    "utf8"
+  );
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(projectRoot, "package.json"), "utf8")
+  );
+
+  assert.match(agent, /description:\s*"/);
+  assert.match(workflow, /pull_request:/);
+  assert.match(workflow, /fromJSON\(needs\.analyze\.outputs\.browsers\)/);
+  assert.match(workflow, /test-impact-report/);
+  assert.equal(typeof packageJson.scripts["test:impact"], "string");
+});

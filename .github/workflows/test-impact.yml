@@ -1,0 +1,125 @@
+name: Pull Request Test Impact
+
+on:
+  pull_request:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  analyze:
+    name: Analyze impacted tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      browsers: ${{ steps.analysis.outputs.browsers }}
+      cucumberFiles: ${{ steps.analysis.outputs.cucumberFiles }}
+      playwrightFiles: ${{ steps.analysis.outputs.playwrightFiles }}
+
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Analyze changed files
+        id: analysis
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref || 'master' }} --depth=50
+          npm run test:impact -- --base "$BASE_SHA" --head "$HEAD_SHA"
+          node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('test-results/test-impact/impact.json'));const out=process.env.GITHUB_OUTPUT;fs.appendFileSync(out,`browsers=${JSON.stringify(r.browsers)}\n`);fs.appendFileSync(out,`cucumberFiles=${r.recommendedCucumber.join(';')}\n`);fs.appendFileSync(out,`playwrightFiles=${r.recommendedPlaywright.join(';')}\n`)"
+
+      - name: Run type-check and quality gates
+        env:
+          BASE_URL: https://testautomationpractice.blogspot.com/
+          EXPECTED_TITLE: Automation Testing Practice
+        run: |
+          npm run typecheck
+          npm run test:ci:quality-gates
+
+      - name: Comment impact report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('test-results/test-impact/impact-report.md', 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: report
+            });
+
+      - name: Upload impact report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-impact-report
+          path: test-results/test-impact/
+          if-no-files-found: error
+          retention-days: 14
+
+  cucumber:
+    name: Impacted Cucumber / ${{ matrix.browser }}
+    needs: analyze
+    if: needs.analyze.outputs.cucumberFiles != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ${{ fromJSON(needs.analyze.outputs.browsers) }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Run impacted Cucumber tests
+        env:
+          HEADLESS: true
+          TEST_FILES: ${{ needs.analyze.outputs.cucumberFiles }}
+        run: npm run test:ci:cucumber -- ${{ matrix.browser }}
+
+  playwright:
+    name: Impacted Playwright / ${{ matrix.browser }}
+    needs: analyze
+    if: needs.analyze.outputs.playwrightFiles != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ${{ fromJSON(needs.analyze.outputs.browsers) }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Run impacted Playwright tests
+        env:
+          HEADLESS: true
+          TEST_FILES: ${{ needs.analyze.outputs.playwrightFiles }}
+        run: npm run test:ci:playwright -- ${{ matrix.browser }}
